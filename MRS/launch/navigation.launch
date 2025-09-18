@@ -1,0 +1,56 @@
+<launch>
+    
+    <!-- ARGOMENTI -->
+    <!-- Permette di specificare da riga di comando quale mappa usare -->
+    <arg name="map_file" default="$(find multi_robot_simulator)/maps/my_map.yaml"/>
+    <!-- Permette di scegliere il robot da controllare -->
+    <arg name="robot_name" default="robot1"/>
+
+    <!-- ======================= SIMULAZIONE ======================= -->
+    
+    <!-- 1. Carica la configurazione del simulatore (robot, sensori, etc.) -->
+    <rosparam command="load" file="$(find multi_robot_simulator)/config/sim_config.yaml" />
+
+    <!-- 2. Lancia il tuo nodo simulatore -->
+    <node pkg="multi_robot_simulator" type="simulator_node" name="multi_robot_simulator_node" output="screen" />
+
+    <!-- ======================= NAVIGAZIONE ======================= -->
+
+    <!-- 3. Lancia il Map Server -->
+    <!-- Pubblica la mappa statica sul topic /map, usata da amcl e move_base -->
+    <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)"/>
+
+    <!-- 4. Lancia AMCL (Localizzazione) -->
+    <!-- AMCL stima la posa del robot sulla mappa e fornisce il TF map -> odom -->
+    <node name="amcl" pkg="amcl" type="amcl" output="screen">
+        <!-- Carica i parametri specifici per amcl -->
+        <rosparam file="$(find multi_robot_simulator)/param/amcl.yaml" command="load" />
+        
+        <!-- Rimappa i topic standard di amcl a quelli del nostro robot specifico -->
+        <remap from="scan" to="/$(arg robot_name)/scan"/>
+        <remap from="odom" to="/$(arg robot_name)/odom"/>
+        <!-- amcl ha bisogno del TF base->odom che il tuo simulatore già fornisce -->
+    </node>
+
+    <!-- 5. Lancia Move Base (Pianificazione e Controllo) -->
+    <!-- Il cervello della navigazione: pianifica percorsi e invia comandi di velocità -->
+    <node name="move_base" pkg="move_base" type="move_base" respawn="false" output="screen">
+        <!-- Carica tutti i file di configurazione per move_base -->
+        <rosparam file="$(find multi_robot_simulator)/param/costmap_common_params.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find multi_robot_simulator)/param/costmap_common_params.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find multi_robot_simulator)/param/local_costmap_params.yaml" command="load" />
+        <rosparam file="$(find multi_robot_simulator)/param/global_costmap_params.yaml" command="load" />
+        <rosparam file="$(find multi_robot_simulator)/param/base_local_planner_params.yaml" command="load" />
+
+        <!-- Rimappa i topic standard di move_base a quelli del nostro robot -->
+        <remap from="cmd_vel" to="/$(arg robot_name)/cmd_vel"/>
+        <remap from="odom" to="/$(arg robot_name)/odom"/>
+        <remap from="scan" to="/$(arg robot_name)/scan"/>
+    </node>
+    
+    <!-- ======================= VISUALIZZAZIONE ======================= -->
+
+    <!-- 6. Lancia RViz con una configurazione salvata per la navigazione -->
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find multi_robot_simulator)/config/navigation.rviz" required="true" />
+
+</launch>
