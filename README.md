@@ -89,7 +89,7 @@ roslaunch multi_robot_simulator start_simulation.launch
 | **Laser Range/FOV** | `config/sim_config.yaml` | `sensors` section |
 
 ## System Architecture
-![](https://github.com/SimoneSangiorgio/RobProg/blob/1304d314e3932555ba03d5b523ff856ebe89852f/rosgraph.png)
+![](https://github.com/SimoneSangiorgio/RobProg/blob/5cc8eb206404aed41bf46fc164372a59d167d425/rosgraph_simplified.png)
 1. **`simulator_node`**: Subscribes to `/cmd_vel`, updates robot pose based on kinematics, and publishes `/odom` and `/scan`.
 2. **`move_base`**: Plans global and local paths using the static map and sensor data.
 3. **`amcl`**: Corrects odometry drift by comparing laser scans to the known map.
