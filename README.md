@@ -32,3 +32,45 @@ multi_robot_simulator/
 │   └── simulator_node.cpp   # The core simulator engine
 └── include/                 # Headers
     └── multi_robot_simulator/
+
+## Usage
+
+### 1. Start the Simulation
+Open a terminal and launch the simulator node, map server, and RViz:
+
+```bash
+cd ~/catkin_ws
+source devel/setup.bash
+roslaunch multi_robot_simulator start_simulation.launch
+```
+
+### 2. Start Navigation Stack
+Open a **second terminal** to launch AMCL and Move Base for the robots:
+
+```bash
+cd ~/catkin_ws
+source devel/setup.bash
+roslaunch multi_robot_simulator navigation.launch
+```
+
+### 3. Control
+- Open the **RViz** window.
+- Select **"2D Nav Goal"** in the top toolbar.
+- Click and drag on the map to send a target destination to the robot.
+
+## ⚙️ Configuration Guide
+
+| Goal | File to Modify | Parameter |
+|------|----------------|-----------|
+| **Max Speed (Physics)** | `config/sim_config.yaml` | `max_velocities/linear_x` |
+| **Max Speed (Planner)** | `param/base_local_planner_params.yaml` | `max_vel_x` |
+| **Robot Size/Radius** | `param/costmap_common_params_robotX.yaml` | `robot_radius` or `footprint` |
+| **Initial Position** | `config/sim_config.yaml` | `initial_pose` |
+| **Laser Range/FOV** | `config/sim_config.yaml` | `sensors` section |
+
+## 📊 System Architecture
+
+1. **`simulator_node`**: Subscribes to `/cmd_vel`, updates robot pose based on kinematics, and publishes `/odom` and `/scan`.
+2. **`move_base`**: Plans global and local paths using the static map and sensor data.
+3. **`amcl`**: Corrects odometry drift by comparing laser scans to the known map.
+
