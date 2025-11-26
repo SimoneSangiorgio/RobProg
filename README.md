@@ -19,7 +19,6 @@ multi_robot_simulator/
 │   └── MRS.rviz             # Visualization config
 ├── launch/                  # Startup scripts
 │   ├── start_simulation.launch  # Main entry point
-│   └── ...
 ├── maps/                    # Environment data
 │   ├── my_map.pgm           # Occupancy grid image
 │   └── my_map.yaml          # Map metadata
