@@ -34,6 +34,34 @@ multi_robot_simulator/
     └── multi_robot_simulator/
 ```
 
+## Prerequisites
+
+- **OS**: Ubuntu 20.04 (recommended)
+- **ROS Distro**: Noetic (or Melodic)
+- **Dependencies**:
+  ```bash
+  sudo apt-get install ros-noetic-navigation ros-noetic-map-server ros-noetic-tf2-ros
+  ```
+
+## Installation
+
+1. **Clone the repository** into your workspace:
+   ```bash
+   cd ~/catkin_ws/src
+   git clone <repository_url> multi_robot_simulator
+   ```
+
+2. **Build the package**:
+   ```bash
+   cd ~/catkin_ws
+   catkin_make
+   ```
+
+3. **Source the environment**:
+   ```bash
+   source devel/setup.bash
+   ```
+
 ## Usage
 
 ### 1. Start the Simulation
@@ -43,15 +71,6 @@ Open a terminal and launch the simulator node, map server, and RViz:
 cd ~/catkin_ws
 source devel/setup.bash
 roslaunch multi_robot_simulator start_simulation.launch
-```
-
-### 2. Start Navigation Stack
-Open a **second terminal** to launch AMCL and Move Base for the robots:
-
-```bash
-cd ~/catkin_ws
-source devel/setup.bash
-roslaunch multi_robot_simulator navigation.launch
 ```
 
 ### 3. Control
