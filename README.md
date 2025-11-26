@@ -78,7 +78,7 @@ roslaunch multi_robot_simulator start_simulation.launch
 - Select **"2D Nav Goal"** in the top toolbar.
 - Click and drag on the map to send a target destination to the robot.
 
-## ⚙️ Configuration Guide
+## Configuration Guide
 
 | Goal | File to Modify | Parameter |
 |------|----------------|-----------|
@@ -88,7 +88,7 @@ roslaunch multi_robot_simulator start_simulation.launch
 | **Initial Position** | `config/sim_config.yaml` | `initial_pose` |
 | **Laser Range/FOV** | `config/sim_config.yaml` | `sensors` section |
 
-## 📊 System Architecture
+## System Architecture
 ![](https://github.com/SimoneSangiorgio/RobProg/blob/1304d314e3932555ba03d5b523ff856ebe89852f/rosgraph.png)
 1. **`simulator_node`**: Subscribes to `/cmd_vel`, updates robot pose based on kinematics, and publishes `/odom` and `/scan`.
 2. **`move_base`**: Plans global and local paths using the static map and sensor data.
