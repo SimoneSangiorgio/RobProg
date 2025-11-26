@@ -1,0 +1,35 @@
+<!-- Salva come: launch/navigation_final.launch -->
+<launch>
+
+
+
+    <!-- 4. Pubblica la trasformazione STATICA tra il centro del robot e il laser. -->
+    <node pkg="tf2_ros" type="static_transform_publisher" name="robot1_base_to_laser_broadcaster" 
+          args="0.1 0 0 0 0 0 robot1/base_link robot1/laser_frame" /> 
+
+    <!-- ======================= STACK DI NAVIGAZIONE PER ROBOT 1 ======================= -->
+
+    <!-- 5. Lancia AMCL (Localizzazione). Stima la posa del robot sulla mappa. -->
+    <node name="robot1_amcl" pkg="amcl" type="amcl" output="screen">
+        <rosparam file="$(find multi_robot_simulator)/param/amcl_robot1.yaml" command="load" />
+        <remap from="scan" to="/robot1/scan"/>
+        <remap from="odom" to="/robot1/odom"/>
+        <remap from="initialpose" to="/initialpose"/>
+    </node>
+
+    <!-- 6. AGGIUNTO: Lancia Move Base (Pianificazione e Controllo). -->
+    <!-- Questo è il "cervello" che calcola il percorso e invia comandi di velocità. -->
+    <node name="robot1_move_base" pkg="move_base" type="move_base" respawn="false" output="screen">
+        <!-- Carica tutti i file di configurazione necessari per move_base -->
+        <rosparam file="$(find multi_robot_simulator)/param/costmap_common_params_robot1.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find multi_robot_simulator)/param/costmap_common_params_robot1.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find multi_robot_simulator)/param/local_costmap_params.yaml" command="load" />
+        <rosparam file="$(find multi_robot_simulator)/param/global_costmap_params.yaml" command="load" />
+        <rosparam file="$(find multi_robot_simulator)/param/base_local_planner_params.yaml" command="load" />
+        
+        <!-- Dice a move_base quali topic usare per comunicare con il simulatore -->
+        <remap from="cmd_vel" to="/robot1/cmd_vel"/>
+        <remap from="odom" to="/robot1/odom"/>
+    </node>
+
+</launch>

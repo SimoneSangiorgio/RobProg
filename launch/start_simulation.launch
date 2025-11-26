@@ -1,0 +1,66 @@
+<launch>
+
+
+    <rosparam command="load" file="$(find multi_robot_simulator)/config/sim_config.yaml" />
+
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find multi_robot_simulator)/maps/my_map.yaml"/>
+
+    <node pkg="multi_robot_simulator" type="simulator_node" name="multi_robot_simulator_node" output="screen" />
+
+
+    <!-- ======================= STACK NAVIGAZIONE ROBOT 1 ======================= -->
+
+    <node pkg="tf2_ros" type="static_transform_publisher" name="robot1_base_to_laser_broadcaster" 
+          args="0.1 0 0 0 0 0 robot1/base_link robot1/laser_frame" /> 
+
+    <!-- AMCL (Localizzazione) -->
+    <node name="robot1_amcl" pkg="amcl" type="amcl" output="screen">
+        <rosparam file="$(find multi_robot_simulator)/param/amcl_robot1.yaml" command="load" />
+        <remap from="scan" to="/robot1/scan"/>
+        <remap from="odom" to="/robot1/odom"/>
+        <remap from="initialpose" to="/initialpose"/>
+    </node>
+
+    <!-- Move Base (Pianificazione e Controllo) -->
+    <node name="robot1_move_base" pkg="move_base" type="move_base" respawn="false" output="screen">
+        <rosparam file="$(find multi_robot_simulator)/param/costmap_common_params_robot1.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find multi_robot_simulator)/param/costmap_common_params_robot1.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find multi_robot_simulator)/param/local_costmap_params.yaml" command="load" />
+        <rosparam file="$(find multi_robot_simulator)/param/global_costmap_params.yaml" command="load" />
+        <rosparam file="$(find multi_robot_simulator)/param/base_local_planner_params.yaml" command="load" />
+        
+        <remap from="cmd_vel" to="/robot1/cmd_vel"/>
+        <remap from="odom" to="/robot1/odom"/>
+    </node>
+
+
+    <!-- ======================= STACK NAVIGAZIONE ROBOT 2 ======================= -->
+
+    <node pkg="tf2_ros" type="static_transform_publisher" name="robot2_base_to_laser_broadcaster" 
+          args="0.1 0 0 0 0 0 robot2/base_link robot2/laser_frame" />
+
+
+    <node name="robot2_amcl" pkg="amcl" type="amcl" output="screen">
+        <rosparam file="$(find multi_robot_simulator)/param/amcl_robot2.yaml" command="load" />
+        <remap from="scan" to="/robot2/scan"/>
+        <remap from="odom" to="/robot2/odom"/>
+        <remap from="initialpose" to="/initialpose"/>
+    </node>
+
+
+    <node name="robot2_move_base" pkg="move_base" type="move_base" respawn="false" output="screen">
+        <rosparam file="$(find multi_robot_simulator)/param/costmap_common_params_robot2.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find multi_robot_simulator)/param/costmap_common_params_robot2.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find multi_robot_simulator)/param/local_costmap_params.yaml" command="load" />
+        <rosparam file="$(find multi_robot_simulator)/param/global_costmap_params.yaml" command="load" />
+        <rosparam file="$(find multi_robot_simulator)/param/base_local_planner_params.yaml" command="load" />
+        
+        <remap from="cmd_vel" to="/robot2/cmd_vel"/>
+        <remap from="odom" to="/robot2/odom"/>
+    </node>
+
+
+
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find multi_robot_simulator)/config/MRS.rviz" required="true" />
+
+</launch>

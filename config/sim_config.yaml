@@ -1,0 +1,50 @@
+
+map:
+  image_path: "$(find multi_robot_simulator)/maps/my_map.pgm"  
+  resolution: 0.05  # metri/pixel
+  origin: [-10.0, -10.0, 0.0]
+
+
+robots:
+  # --- Robot 1 ---
+  - name: "robot1"
+    frame_id: "robot1/base_link" 
+    initial_pose: [-2.0, 0.5, 0.0] # [x (m), y (m), theta (radianti)]
+    
+    max_velocities:
+      linear_x: 0.5   # m/s
+      angular_z: 1.0  # rad/s 
+
+    sensors:
+      - type: "laser_scanner"
+        frame_id: "robot1/laser_frame" 
+        topic: "/robot1/scan"
+        
+        # [x, y, theta] -> 10cm in avanti, 0cm di lato, 0 rotazione
+        relative_pose: [0.1, 0.0, 0.0] 
+        
+        beams: 360              # Numero di raggi laser
+        range_min: 0.1          # Distanza minima di rilevamento (m)
+        range_max: 10.0         # Distanza massima di rilevamento (m)
+        angle_min: -3.14159     # Angolo del primo raggio (radianti, -180°)
+        angle_max: 3.14159      # Angolo dell'ultimo raggio (radianti, +180°)
+
+  # --- Robot 2 ---
+  - name: "robot2"
+    frame_id: "robot2/base_link"
+    initial_pose: [4.0, -1.0, 1.57] 
+    
+    max_velocities:
+      linear_x: 0.4
+      angular_z: 1.2
+
+    sensors:
+      - type: "laser_scanner"
+        frame_id: "robot2/laser_frame"
+        topic: "/robot2/scan"
+        relative_pose: [0.1, 0.0, 0.0]
+        beams: 180
+        range_min: 0.2
+        range_max: 8.0
+        angle_min: -1.5707 
+        angle_max: 1.5707
