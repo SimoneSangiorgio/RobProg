@@ -32,6 +32,7 @@ multi_robot_simulator/
 │   └── simulator_node.cpp   # The core simulator engine
 └── include/                 # Headers
     └── multi_robot_simulator/
+```
 
 ## Usage
 
